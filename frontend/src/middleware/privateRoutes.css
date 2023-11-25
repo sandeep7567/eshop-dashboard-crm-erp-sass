@@ -1,0 +1,28 @@
+#page {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-areas:
+      "aside nav nav"
+      "aside main main"
+      "aside main main";
+  grid-template-rows: 60px 1fr 30px;
+  grid-template-columns: 220px 1fr;
+}
+
+#page > nav {
+  grid-area: nav;
+  /* background-color: #8ca0ff; */
+}
+
+#page > aside {
+  grid-area: aside;
+  /* background-color: #ffa08c; */
+}
+
+#page > main {
+  grid-area: main;
+  margin-top: 5rem;
+  margin-bottom: 10rem;
+  /* background-color: #ffff64; */
+}

@@ -1,0 +1,35 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900;1000&display=swap");
+
+*,
+body,
+html,
+#root {
+  width: 100%;
+  /* height: 100%; */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Nunito,sans-serif!important;
+  font-weight: 700;
+  -webkit-font-smoothing: antialiased;
+  /* overflow-x: hidden; */
+}
+
+.card-shadow {
+  @apply shadow-[0px_0px_20px_3px_rgba(150,190,238,0.15)]
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
