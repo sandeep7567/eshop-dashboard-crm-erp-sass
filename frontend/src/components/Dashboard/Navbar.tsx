@@ -1,5 +1,9 @@
 import { User } from "lucide-react";
 import { DropDown } from "@/components/ui/DropDown";
+import { useAppSelector } from "@/hooks/reduxHooks";
+import { AvatarModel } from "../ui/AvatarModel";
+import { adminInfo } from "@/redux/features/auth/authSlice";
+// import { UserInfoProps } from "@/types/types";
 
 export type profileItemsTypes = {
   id: string;
@@ -8,7 +12,20 @@ export type profileItemsTypes = {
   link: string;
 }[];
 
+const AvatarProfile = ({userName, ...props}:adminInfo) => {
+  return (
+    <AvatarModel {...props}
+      className="bg-avatar text-textavatar"
+      avatar={userName && userName.charAt(0)}
+      avatarName={userName && userName.charAt(0)}
+    />
+  );
+};
+
 const Navbar = () => {
+  // const dispatch = useAppDispatch();
+  const { userInfo } = useAppSelector((state) => state.auth);
+
   const profileItems: profileItemsTypes = [
     {
       id: "1",
@@ -20,13 +37,18 @@ const Navbar = () => {
 
   return (
     <DropDown
-      avatar={
-        <div className="flex w-10 h-10 mx-auto bg-orange-200 bg-opacity-100 font-bold text-orange-500
-        ml-auto rounded-full text-sm text-center justify-center items-center">
-          S
-        </div>
+      avatar={<AvatarProfile {...userInfo} />}
+      header={
+        <>
+          <header className="w-full py-2 flex justify-center items-center gap-x-3 cursor-pointer mx-auto">
+            <AvatarProfile {...userInfo} />
+            <section>
+              <p>{userInfo?.userName && userInfo?.userName.toLowerCase() || "sandeep thakur"}</p>
+              <p>{userInfo?.email && userInfo?.email?.toLowerCase() || "admin@demo.com"}</p>
+            </section>
+          </header>
+        </>
       }
-      header={"hello"}
       profileItems={profileItems}
     />
   );

@@ -9,14 +9,14 @@ html,
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Nunito,sans-serif!important;
+  font-family: "Nunito", sans-serif;
   font-weight: 700;
   -webkit-font-smoothing: antialiased;
   /* overflow-x: hidden; */
 }
 
 .card-shadow {
-  @apply shadow-[0px_0px_20px_3px_rgba(150,190,238,0.15)]
+  @apply shadow-[0px_0px_20px_3px_rgba(150,190,238,0.15)];
 }
 
 @keyframes logo-spin {

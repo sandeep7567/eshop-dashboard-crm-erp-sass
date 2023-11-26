@@ -1,17 +1,25 @@
-import { createSlice } from '@reduxjs/toolkit'
-// import type { PayloadAction } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-export interface UserLoggedInPayload {
+export type adminInfo = {
+  _id: string;
   userName: string;
   email: string;
-  _id: string;
-  
+  isAdmin: boolean;
+  role: string;
+  active: boolean;
+  isLoggedIn: boolean;
 }
 
-const initialState = {
+type initialSatate = {
+  userInfo: adminInfo;
+  isLoggedIn: boolean;
+  isLoggedOut: boolean;
+}
+
+const initialState: initialSatate = {
   userInfo: localStorage.getItem("userInfo")
     ? JSON.parse(localStorage.getItem("userInfo") || "")
-    : null,
+    : {},
 
   isLoggedIn: localStorage.getItem("isLoggedIn")
   ? JSON.parse(localStorage.getItem("isLoggedIn") || "")
@@ -30,20 +38,21 @@ export const authSlice = createSlice({
     //   state.token = action.payload.token;
     //   // state.user = action.payload.user;
     // },
-    userLoggedIn: (state, action) => {
+    userLoggedIn: (state, action: PayloadAction<adminInfo>) => {
       state.userInfo = action.payload;
       // action.payload ? action.payload?.isLoggedIn : true
-      state.isLoggedIn = true;
+      state.isLoggedIn = action.payload?.isLoggedIn
       state.isLoggedOut = false;
       localStorage.setItem("userInfo", JSON.stringify(action.payload));
-      localStorage.setItem("isLoggedIn", JSON.stringify(true));
+      localStorage.setItem("isLoggedIn", JSON.stringify(action.payload?.isLoggedIn));
       localStorage.setItem("isLoggedOut", JSON.stringify(false));
     },
     userLoggedOut: (state) => {
-      state.userInfo = null;
+      state.userInfo = {} as adminInfo || null;
       state.isLoggedIn = false;
       state.isLoggedOut = true;
-      localStorage.removeItem("userInfo");
+      // localStorage.removeItem("userInfo");
+      localStorage.clear();
       localStorage.setItem("isLoggedIn", JSON.stringify(false));
       localStorage.setItem("isLoggedOut", JSON.stringify(true));
     },

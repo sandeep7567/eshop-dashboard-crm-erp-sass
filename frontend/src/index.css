@@ -8,6 +8,8 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
+    --orange-avatar: rgb(253,227,207);
+    --orange-text-avatar: rgb(245,106,0);
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
@@ -50,7 +52,6 @@
     --ring: 224.3 76.3% 48%;
   }
 }
-
  
 @layer base {
   * {

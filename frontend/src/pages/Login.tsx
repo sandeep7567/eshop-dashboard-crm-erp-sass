@@ -75,20 +75,7 @@ const Login = () => {
     setError(false);
     try {
       const res = await login({ email, password }).unwrap();
-      const userInfo = res?.data?.user;
-      console.log(userInfo);
-      if (userInfo && !userInfo?.isAdmin) {
-        return (
-          setError(true),
-          setErrorMessage([
-            {
-              err: "You are not authorized to access Admin Routes",
-              _id: "isAdmin",
-            },
-            { err: "", _id: "isAdmin" },
-          ])
-        );
-      }
+      const userInfo = res?.data?.admin;
       if (res.success && userInfo?.isLoggedIn && userInfo?.isAdmin) {
         dispatch(userLoggedIn({ ...userInfo }));
         navigate("/admin/dashboard");

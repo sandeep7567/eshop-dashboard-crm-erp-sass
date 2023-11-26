@@ -2,8 +2,9 @@ class ApiError extends Error {
   constructor(
       statusCode,
       message= "Something went wrong",
+      jwtExpired = false,
       errors = [],
-      stack = ""
+      stack = "",
   ){
       super(message)
       this.statusCode = statusCode
@@ -11,6 +12,7 @@ class ApiError extends Error {
       this.message = message
       this.success = false;
       this.errors = errors
+      this.jwtExpired = jwtExpired
 
       if (stack) {
           this.stack = stack

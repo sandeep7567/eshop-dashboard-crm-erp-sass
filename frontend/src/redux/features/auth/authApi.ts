@@ -29,8 +29,8 @@ export const authApi = apiSlice.injectEndpoints({
     //   }
     // }),
     login: builder.mutation({
-      query: ({ email, password }: {email:string, password: string}) => ({
-        url: `${AUTH}/login`,
+      query: ({ email, password }: { email: string; password: string }) => ({
+        url: `${AUTH}/admin/login`,
         method: "POST",
         body: { email, password },
         credentials: "include" as const,
@@ -48,6 +48,13 @@ export const authApi = apiSlice.injectEndpoints({
       //     }
       //   }
       // }
+    }),
+    logout: builder.mutation({
+      query: () => ({
+        url: `${AUTH}/logout`,
+        method: "POST",
+        credentials: "include" as const,
+      }),
     }),
     // logOut: builder.query({
     //   query: () => ({
@@ -98,7 +105,7 @@ export const authApi = apiSlice.injectEndpoints({
 export const {
   // useRegisterMutation,
   useLoginMutation,
-  // useLogOutQuery,
+  useLogoutMutation,
   // useResetOTPThroughEmailMutation,
   // useOtpVerificationMutation,
   // useResetPasswordMutation,

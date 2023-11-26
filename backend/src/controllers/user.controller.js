@@ -42,6 +42,83 @@ const registerUser = asyncHandler(async (req, res) => {
 
 });
 
+
+
+// @desc - Admin only Login User
+// @route - POST /api/v1/auth/admin/login
+// @access Admin/Private
+const adminLogin = asyncHandler(async (req, res) => {
+  const adminId = req.adminId;
+  const { email, password } = req.body;
+
+  if (!adminId || !email || !password) {
+    throw new ApiError("301", "Invalid admin")
+  };
+
+  const adminLogin = await User.findById(adminId).exec();
+
+  if (!adminLogin) {
+    throw new ApiError(404, "User Not Found");
+  };
+
+  if (!adminLogin.email.includes(email)) {
+    throw new ApiError(400, "Admin only login Credentials");
+  }
+
+  const isPasswordChecked = await adminLogin.isPasswordCorrect(password);
+
+  if (!isPasswordChecked) {
+    throw new ApiError(400, "Invalid Credentials");
+  };
+
+  const token = adminLogin.generateToken();
+
+  const admin = await User.findOneAndUpdate(
+    { _id: adminLogin?._id },
+    { $set: { isLoggedIn: 1 }, $push: { loggedSessions: token } },
+    { new: true }
+  ).select("-password -token").exec();
+
+  if (!admin) {
+    throw new ApiError(400, "admin error for update to login");
+  };
+
+  if (admin && admin?.isLoggedIn > 1) {
+    throw new ApiError(400, "admin is login more than 1 Device at a time")
+  }
+
+  const options = {
+    maxAge: null,
+    sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'none',
+    httpOnly: process.env.NODE_ENV === 'production' ? true : false,
+    secure: true,
+    domain: req.hostname,
+    Path: '/',
+  };
+
+  return res
+    .status(200)
+    .cookie("token", token, options) // set the access token in the cookie
+    .json(
+      new ApiResponse(
+        200,
+        {
+          admin: {
+            _id: admin._id,
+            userName: admin?.userName,
+            email: admin?.email,
+            isAdmin: admin?.isAdmin,
+            role: admin?.role,
+            active: admin?.active,
+            isLoggedIn: admin.isLoggedIn > 0 ? true : false,
+          }
+        }, // send access and refresh token in response if client decides to save them by themselves
+        "Admin logged in successfully",
+      )
+    );
+
+});
+
 // @desc - Login User
 // @route - POST /api/v1/auth/login
 // @access Public
@@ -131,15 +208,17 @@ const login = asyncHandler(async (req, res) => {
 // @route - POST /api/v1/auth/logout
 // @access Private
 const logout = asyncHandler(async (req, res) => {
-  const token = req.cookies.token;
+  const token = req.cookies?.token
 
-  // const variablec for short codes
-  // const noOfToken = req.user?.loggedSessions.length
-  // const token = req.user.loggedSessions[ noOfToken - 1 ];
+  // const { adminId } = req.params;
+
+  // if (!adminId) {
+  //   throw new ApiError(404, "Admin Token/Id Not Found", true);
+  // };
 
   // updating before logout user
   const logoutUser = await User.findOneAndUpdate(
-    { _id: req.user._id },
+    { loggedSessions: token },
     { $set: { isLoggedIn: 0 }, $pull: { loggedSessions: token } },
     { new: true },
   ).select("-password -loggedSessions").exec();
@@ -147,6 +226,8 @@ const logout = asyncHandler(async (req, res) => {
   if (!logoutUser) {
     throw new ApiError(404, "User not logged in");
   };
+
+  console.log({logoutUser});
 
   const isLoggedOut = logoutUser?.isLoggedIn ? false : true;
 
@@ -299,6 +380,7 @@ const createUser = asyncHandler(async (req, res) => {
 });
 
 export {
+  adminLogin,
   registerUser,
   login,
   logout,

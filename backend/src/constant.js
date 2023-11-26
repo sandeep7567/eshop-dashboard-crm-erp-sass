@@ -5,4 +5,8 @@ const Role = {
   CUSTOMER_ACCOUNT_ACCESS : "Customer",
 };
 
-export { DB_NAME, Role };
+const JWT_ERROR_MESSAGE = {
+  JWT_EXPIRE: "jwt expired",
+};
+
+export { DB_NAME, Role, JWT_ERROR_MESSAGE };

@@ -59,7 +59,15 @@ module.exports = {
         red: {
           DEFAULT: "hsl(var(--red))",
           foreground: "hsl(var(--red-foreground))",
-        }
+        },
+        avatar: {
+          DEFAULT: "var(--orange-avatar)",
+          foreground: "var(--orange-avatar)",
+        },
+        textavatar: {
+          DEFAULT: "var(--orange-text-avatar)",
+          foreground: "var(--orange-text-avatar)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
