@@ -2,8 +2,7 @@ import User from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import mongoose from "mongoose"
-import url from "url";
+import mongoose, { isValidObjectId } from "mongoose"
 
 // @desc - Register User
 // @route - POST /api/v1/auth/register
@@ -42,8 +41,6 @@ const registerUser = asyncHandler(async (req, res) => {
 
 });
 
-
-
 // @desc - Admin only Login User
 // @route - POST /api/v1/auth/admin/login
 // @access Admin/Private
@@ -77,7 +74,7 @@ const adminLogin = asyncHandler(async (req, res) => {
     { _id: adminLogin?._id },
     { $set: { isLoggedIn: 1 }, $push: { loggedSessions: token } },
     { new: true }
-  ).select("-password -token").exec();
+  ).select("-password -loggedSessions").exec();
 
   if (!admin) {
     throw new ApiError(400, "admin error for update to login");
@@ -111,6 +108,7 @@ const adminLogin = asyncHandler(async (req, res) => {
             role: admin?.role,
             active: admin?.active,
             isLoggedIn: admin.isLoggedIn > 0 ? true : false,
+            updatedAt: admin.updatedAt,
           }
         }, // send access and refresh token in response if client decides to save them by themselves
         "Admin logged in successfully",
@@ -201,33 +199,32 @@ const login = asyncHandler(async (req, res) => {
         "User logged in successfully",
       )
     );
-
 });
 
 // @desc - Logout User/ Clear Cookie
 // @route - POST /api/v1/auth/logout
 // @access Private
 const logout = asyncHandler(async (req, res) => {
-  const token = req.cookies?.token
+  const {userId} = req.params;
+  if (!isValidObjectId(userId)) {
+    res.status(404);
+    throw new Error(`Invalid ObjectId of:  ${req.params.id}`);
+  };
 
-  // const { adminId } = req.params;
+  const user = await User.findById(userId);
 
-  // if (!adminId) {
-  //   throw new ApiError(404, "Admin Token/Id Not Found", true);
-  // };
+  const token = user?.loggedSessions[0] ? user?.loggedSessions[0] : null;
 
   // updating before logout user
   const logoutUser = await User.findOneAndUpdate(
-    { loggedSessions: token },
+    { loggedSessions: user?.loggedSessions[0] },
     { $set: { isLoggedIn: 0 }, $pull: { loggedSessions: token } },
     { new: true },
   ).select("-password -loggedSessions").exec();
 
   if (!logoutUser) {
-    throw new ApiError(404, "User not logged in");
+    throw new ApiError(404, "User already logged out");
   };
-
-  console.log({logoutUser});
 
   const isLoggedOut = logoutUser?.isLoggedIn ? false : true;
 
@@ -246,14 +243,14 @@ const logout = asyncHandler(async (req, res) => {
 
 });
 
-// @desc - Get User Profile
+// @desc - Get User/Customer Self Profile
 // @route - GET /api/v1/auth/profile
 // @access Private
 const getUserProfile = asyncHandler(async (req, res) => {
   res.send('get user profile');
 })
 
-// @desc - Update User Profile
+// @desc - Update User/Customer Self Update Profiles
 // @route - PUT /api/v1/auth/profile
 // @access Private
 const updateUserProfile = asyncHandler(async (req, res) => {
@@ -303,7 +300,7 @@ const getUserByID = asyncHandler(async (req, res) => {
 // @desc - Update User
 // @route - PUT /api/v1/auth/user/:id
 // @access Private/Admin
-const updateUser = asyncHandler(async (req, res) => {
+const updateUserById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const user = await User.findById(id);
   const { userName, email, password, isAdmin, role } = req.body;
@@ -331,7 +328,7 @@ const updateUser = asyncHandler(async (req, res) => {
 // @desc - Delete User
 // @route - DELETE /api/v1/auth/users/:id
 // @access Private/Admin
-const deleteUser = asyncHandler(async (req, res) => {
+const deleteUserById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   const deletedUser = await User.findOneAndDelete({ _id: id });
@@ -389,6 +386,6 @@ export {
   getAllUsers,
   createUser,
   getUserByID,
-  updateUser,
-  deleteUser,
+  updateUserById,
+  deleteUserById,
 };

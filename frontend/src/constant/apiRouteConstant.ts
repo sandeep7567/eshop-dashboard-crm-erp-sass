@@ -1,5 +1,8 @@
 const apiRoute = {
   AUTH: '/auth',
+  PRODUCT: '/product',
 };
 
-export const { AUTH } = apiRoute;
+export const { 
+  AUTH, PRODUCT
+} = apiRoute;

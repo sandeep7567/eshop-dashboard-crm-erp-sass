@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import User from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import dotenv from "dotenv";
@@ -10,13 +11,11 @@ dotenv.config();
 const { JWT_EXPIRE } = JWT_ERROR_MESSAGE;
 
 const isAuthenticated = asyncHandler(async (req, res, next) => {
-
-
   try {
 
     const token = req.cookies?.token
 
-    if (!token) {
+    if (!token ) {
       throw new ApiError(401, "Unauthorized request", true);
     }
 
@@ -34,6 +33,7 @@ const isAuthenticated = asyncHandler(async (req, res, next) => {
     }
 
     const session = user.loggedSessions.some(session => session === token)
+    
     if (user && session) {
       req.user = user;
       next();
@@ -75,8 +75,17 @@ const isAdminLogin = asyncHandler(async (req, res, next) => {
   }
 });
 
+const isValidId = asyncHandler(async (req, res, next) => {
+  if (!isValidObjectId(req.params.id)) {
+    res.status(404);
+    throw new Error(`Invalid ObjectId of:  ${req.params.id}`);
+  }
+  next();
+});
+
 export {
   isAuthenticated,
   isAdmin,
   isAdminLogin,
+  isValidId,
 };

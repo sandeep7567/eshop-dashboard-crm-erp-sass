@@ -83,7 +83,6 @@ const Login = () => {
     } catch (err: any) {
       if (!err.data.success) {
         const errorMessage = err?.data?.message;
-        console.log(errorMessage);
         return (
           setError(true),
           setErrorMessage([

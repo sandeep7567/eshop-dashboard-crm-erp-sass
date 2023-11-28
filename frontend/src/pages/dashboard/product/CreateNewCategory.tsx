@@ -1,6 +1,5 @@
 import { PlusIcon, XCircle } from "lucide-react";
 
-import Spinner from "@/components/ui/Spinner";
 import {
   CardContent,
   CardFooter,
@@ -13,14 +12,19 @@ import { Separator } from "@/components/ui/Separator";
 import CreateNewCategoryForm from "@/form/product/CreateNewCategoryForm";
 
 const CreateNewCategory = () => {
-  const loading = false;
-  const error = false;
-
-  if (loading || error) {
-    return <Spinner />;
-  }
-
   return (
+    // <>
+    //   {isLoading ? (
+    //     <Spinner />
+    //   ) : error ? (
+    //     <p className="bg-red-800 text-blue-600">Sandeep Thakur</p>
+    //   ) : (
+    //     {
+    //       // data
+    //     }
+    //   )}
+    // </>
+
     <>
       {/* <Card className=""> */}
       <CardHeader className="p-5">
@@ -43,7 +47,12 @@ const CreateNewCategory = () => {
         <CreateNewCategoryForm>
           {/* form category button component */}
           <CardFooter className="w-1/2 flex justify-start mr-auto">
-            <Button size={"sm"} type="submit" className="w-2/5 -ml-6" variant={"default"}>
+            <Button
+              size={"sm"}
+              type="submit"
+              className="w-2/5 -ml-6"
+              variant={"default"}
+            >
               <PlusIcon className="mr-2 h-5 w-5" />
               <span className="font-bold text-sm w-fit">Save</span>
             </Button>

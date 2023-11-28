@@ -1,9 +1,13 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 import "./App.css";
 import Loader from "@/components/ui/Loader";
+
+import { useAppDispatch, useAppSelector } from "./hooks/reduxHooks";
+import { useLogoutMutation } from "./redux/features/auth/authApi";
+import { userLoggedOut } from "./redux/features/auth/authSlice";
 
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
@@ -13,10 +17,53 @@ const PrivateRoutes = lazy(() => import("@/middleware/PrivateRoutes"));
 const Dashboard = lazy(() => import("@/pages/dashboard/Dashboard"));
 const Product = lazy(() => import("@/pages/dashboard/product/Product"));
 const Category = lazy(() => import("@/pages/dashboard/product/Category"));
-const CreateNewProduct = lazy(() => import("@/pages/dashboard/product/CreateNewProduct"));
-const CreateNewCategory = lazy(() => import("@/pages/dashboard/product/CreateNewCategory"));
+const CreateNewProduct = lazy(
+  () => import("@/pages/dashboard/product/CreateNewProduct")
+);
+const CreateNewCategory = lazy(
+  () => import("@/pages/dashboard/product/CreateNewCategory")
+);
 
 function App() {
+  const [logoutApiCall] = useLogoutMutation();
+  const dispatch = useAppDispatch();
+  const { userInfo } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  const expirationTime = localStorage.getItem("expirationTime")
+    ? JSON.parse(localStorage.getItem("expirationTime") || "")
+    : 0;
+
+  // if jwt token expire, then it will be run and
+  // dispatch logout apicall and also dispatch
+  // useLogout authSlice to logout from the backend and
+  // frontend also going to logout and
+  // reset state of redux, respectively,
+  const logout = async () => {
+    if (expirationTime !== null) {
+      if (expirationTime) {
+        const currentTime = new Date().getTime();
+        // console.log(
+        //   currentTime > expirationTime,
+        //   expirationTime,
+        //   currentTime,
+        //   "before condition"
+        // );
+
+        console.log(currentTime > expirationTime);
+        if (currentTime > expirationTime) {
+          await logoutApiCall(userInfo?._id).unwrap();
+          dispatch(userLoggedOut());
+          navigate("/login");
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    logout();
+  }, [dispatch, expirationTime]);
+
   return (
     <Suspense fallback={<Loader />}>
       <Routes>
@@ -32,7 +79,10 @@ function App() {
           <Route path="/admin/customer" element={<Product />} />
           <Route path="/admin/settings" element={<Product />} />
           <Route path="/admin/category" element={<Category />} />
-          <Route path="/admin/category/create" element={<CreateNewCategory />} />
+          <Route
+            path="/admin/category/create"
+            element={<CreateNewCategory />}
+          />
         </Route>
       </Routes>
     </Suspense>

@@ -1,3 +1,4 @@
+import { expirationTime } from '@/helpers/expirationTime';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export type adminInfo = {
@@ -8,12 +9,14 @@ export type adminInfo = {
   role: string;
   active: boolean;
   isLoggedIn: boolean;
+  updatedAt: any;
 }
 
 type initialSatate = {
   userInfo: adminInfo;
   isLoggedIn: boolean;
   isLoggedOut: boolean;
+  expirationTime: number;
 }
 
 const initialState: initialSatate = {
@@ -28,6 +31,10 @@ const initialState: initialSatate = {
   isLoggedOut: localStorage.getItem("isLoggedOut")
   ? JSON.parse(localStorage.getItem("isLoggedOut") || "")
   : true,
+
+  expirationTime: localStorage.getItem("expirationTime")
+    ? JSON.parse(localStorage.getItem("expirationTime") || "")
+    : 0,
 };
 
 export const authSlice = createSlice({
@@ -43,18 +50,22 @@ export const authSlice = createSlice({
       // action.payload ? action.payload?.isLoggedIn : true
       state.isLoggedIn = action.payload?.isLoggedIn
       state.isLoggedOut = false;
+      state.expirationTime = expirationTime(action.payload?.updatedAt);
       localStorage.setItem("userInfo", JSON.stringify(action.payload));
       localStorage.setItem("isLoggedIn", JSON.stringify(action.payload?.isLoggedIn));
       localStorage.setItem("isLoggedOut", JSON.stringify(false));
+      localStorage.setItem("expirationTime", JSON.stringify(expirationTime(action.payload?.updatedAt)));
     },
-    userLoggedOut: (state) => {
-      state.userInfo = {} as adminInfo || null;
-      state.isLoggedIn = false;
-      state.isLoggedOut = true;
-      // localStorage.removeItem("userInfo");
+    userLoggedOut: () => {
       localStorage.clear();
-      localStorage.setItem("isLoggedIn", JSON.stringify(false));
-      localStorage.setItem("isLoggedOut", JSON.stringify(true));
+      // state.userInfo = {} as adminInfo || null;
+      // state.isLoggedIn = false;
+      // state.isLoggedOut = true;
+      // state.expirationTime = 0;
+
+      // localStorage.clear();
+
+      return initialState;
     },
   },
 });

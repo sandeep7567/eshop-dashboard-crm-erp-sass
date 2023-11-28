@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const CategorySchema = new Schema({
   title: {
@@ -10,13 +10,18 @@ const CategorySchema = new Schema({
   description: {
     type: String,
   },
+  userId:
+  {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   product: [
     {
       type: Schema.Types.ObjectId,
       ref: "Product",
     }
   ]
-}, {timestamps:true});
+}, { timestamps: true });
 
 const Category = model("Category", CategorySchema);
 

@@ -5,18 +5,19 @@ import {
   login,
   registerUser,
   logout,
-  deleteUser,
+  deleteUserById,
   getUserByID,
   getUserProfile,
   getAllUsers,
-  updateUser,
+  updateUserById,
   updateUserProfile
 } from "../controllers/user.controller.js";
 
 import {
   isAuthenticated,
   isAdmin,
-  isAdminLogin
+  isAdminLogin,
+  isValidId
 } from "../middlewares/auth.middlewares.js"
 
 const router = Router();
@@ -28,13 +29,20 @@ router.route("/login").post(login);
 // router.route("/admin/login").post(login);
 
 router.route("/register").post(registerUser);
-router.route("/logout").post(logout);
+router.route("/logout/:userId").post(logout);
 
 //---------------------------Controll By Self User Account By Verify Through Token-----------------------------//
-router.route("/profile").get(getUserProfile).put(updateUserProfile);
+router.route("/profile")
+  .get(isAuthenticated, getUserProfile)
+  .put(isAuthenticated, updateUserProfile);
 
-// ----------------------------------- Admin Route -----------------------------------------------------------//
-router.route("/users").get(isAuthenticated, isAdmin, getAllUsers);
-router.route("/user/:id").get(getUserByID).put(updateUser).delete(deleteUser);
+// ----------------------------------- Customer/Users Creatd (CRUD) By Admin Routes; -----------------------------------------------------------//
+router.route("/user")
+  .get(isAuthenticated, isAdmin, getAllUsers)
+  .post(isAuthenticated, isAdmin, createUser);
+  router.route("/user/:id")
+    .get(isAuthenticated, isAdmin, isValidId, getUserByID)
+    .put(isAuthenticated, isAdmin, isValidId, updateUserById)
+    .delete(isAuthenticated, isAdmin, isValidId, deleteUserById);
 
 export default router;

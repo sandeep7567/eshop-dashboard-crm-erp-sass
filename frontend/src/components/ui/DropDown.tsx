@@ -17,7 +17,6 @@ import { useLogoutMutation } from "@/redux/features/auth/authApi";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { userLoggedOut } from "@/redux/features/auth/authSlice";
-
 interface DropDownProps {
   avatar: React.ReactElement;
   header: React.ReactElement;
@@ -25,14 +24,18 @@ interface DropDownProps {
 }
 
 export function DropDown({ avatar, profileItems, header }: DropDownProps) {
+  
   const [ logoutApiCall ] = useLogoutMutation();
+
   const dispatch = useAppDispatch();
+  const { userInfo } = useAppSelector((state) => state.auth);
+
   const navigate = useNavigate();
 
   const logoutHandler = async (ev:React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     ev.stopPropagation();
     try {
-      await logoutApiCall(undefined).unwrap();
+      await logoutApiCall(userInfo?._id).unwrap();
       dispatch(userLoggedOut());
 
        // NOTE: here we need to reset cart state for when a user logs out so the next
