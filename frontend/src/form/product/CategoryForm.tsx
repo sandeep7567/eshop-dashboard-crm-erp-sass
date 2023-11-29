@@ -15,20 +15,60 @@ import createCategoryFormSchema from "@/helpers/use-create-category-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useCreateCategoryMutation } from "@/redux/features/auth/productApi";
+import {
+  useCreateCategoryMutation,
+  useGetCategoryByIdQuery,
+} from "@/redux/features/auth/productApi";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/Button";
+import { Loader, PlusIcon } from "lucide-react";
+import { CardFooter } from "@/components/ui/Card";
+import {
+  CategoryApi,
+  ErrorResponse,
+} from "@/pages/dashboard/product/CategoryList";
+import ErrorMessage from "@/components/ui/ErrorMessage";
+import Spinner from "@/components/ui/Spinner";
+import { useEffect, useState } from "react";
 
 interface CreateNewCategoryFormProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  id?: string;
 }
 
-const CreateNewCategoryForm = ({ children }: CreateNewCategoryFormProps) => {
-
+const CategoryForm = ({
+  children,
+  id,
+}: CreateNewCategoryFormProps) => {
   const navigate = useNavigate();
-  const [ createCategoryApi, { isLoading } ]  = useCreateCategoryMutation();
+  const [createCategoryApi, { isLoading }] = useCreateCategoryMutation();
+
+  const [edit, setEdit] = useState(false);
+
+  const {
+    data,
+    isLoading: getCategoryByIdLoading,
+    error: getCategoryByIdError,
+  } = useGetCategoryByIdQuery(id, {
+    skip: edit ? false : true,
+  });
+  
+  const updateData: CategoryApi = data?.data;
+
+  useEffect(() => {
+    if (id) {
+      setEdit(true);
+    } else {
+      setEdit(false);
+    }
+  }, [id]);
 
   const form = useForm<z.infer<typeof createCategoryFormSchema>>({
     resolver: zodResolver(createCategoryFormSchema),
+    values: {
+      title: updateData ? updateData?.title : "",
+      description: updateData ? updateData?.description : "",
+    },
     defaultValues: {
       title: "",
       description: "",
@@ -37,9 +77,28 @@ const CreateNewCategoryForm = ({ children }: CreateNewCategoryFormProps) => {
 
   const onSubmit = async (data: z.infer<typeof createCategoryFormSchema>) => {
     // alert(JSON.stringify(data));
-    await createCategoryApi(data);
-    navigate("/admin/category");
+    try {
+      if (id && updateData) {
+        alert(JSON.stringify(data));
+      } else {
+        await createCategoryApi(data);
+      }
+      navigate("/admin/category");
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  // Extract error message from the error object
+  const errorMessage = (getCategoryByIdError as ErrorResponse)?.data?.message;
+
+  if (getCategoryByIdLoading) {
+    return <Spinner />;
+  }
+
+  if (getCategoryByIdError) {
+    return <ErrorMessage>{errorMessage}</ErrorMessage>;
+  }
 
   return (
     <Form {...form}>
@@ -53,21 +112,6 @@ const CreateNewCategoryForm = ({ children }: CreateNewCategoryFormProps) => {
                 <FormLabel>
                   <sup className="text-red-600 text-sm">*</sup>Title
                 </FormLabel>
-                {/* <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a verified email to display" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
-                  </SelectContent>
-                </Select> */}
                 <FormControl>
                   <Input
                     className="text-sm"
@@ -91,21 +135,6 @@ const CreateNewCategoryForm = ({ children }: CreateNewCategoryFormProps) => {
                   <sup className="text-red-600 text-sm">*</sup>
                   Description
                 </FormLabel>
-                {/* <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a verified email to display" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                    <SelectItem value="m@support.com">m@support.com</SelectItem>
-                  </SelectContent>
-                </Select> */}
                 <FormControl>
                   <Input
                     className="text-sm"
@@ -123,9 +152,34 @@ const CreateNewCategoryForm = ({ children }: CreateNewCategoryFormProps) => {
         </div>
         <Separator className="my-6 mx-auto" />
         {children}
+        <CardFooter className="w-1/2 flex justify-start mr-auto">
+          <Button
+            disabled={isLoading}
+            size={"sm"}
+            type="submit"
+            className="w-2/5 -ml-6"
+            variant={"default"}
+          >
+            {isLoading ? (
+              <>
+                <Loader className="mr-2 h-5 w-5 animate-spin" />
+                <span className="font-bold text-sm w-fit">
+                  {id ? "Update" : "Save"}
+                </span>
+              </>
+            ) : (
+              <>
+                <PlusIcon className="mr-2 h-5 w-5" />
+                <span className="font-bold text-sm w-fit">
+                  {id ? "Update" : "Save"}
+                </span>
+              </>
+            )}
+          </Button>
+        </CardFooter>
       </form>
     </Form>
   );
 };
 
-export default CreateNewCategoryForm;
+export default CategoryForm;

@@ -12,7 +12,7 @@ import Header from "@/components/ui/Header";
 import { Separator } from "@/components/ui/Separator";
 import CreateNewProductForm from "@/form/product/CreateNewProductForm";
 
-const Product = () => {
+const CreateNewProduct = () => {
   const loading = false;
   const error = false;
 
@@ -54,4 +54,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default CreateNewProduct;

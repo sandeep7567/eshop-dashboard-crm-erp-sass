@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import CurdDropDown from "../ui/CrudDropDown";
-import { CategoryApi } from "@/pages/dashboard/product/Category";
+import { CategoryApi } from "@/pages/dashboard/product/CategoryList";
 import { Button } from "../ui/Button";
 import { ArrowUpDown } from "lucide-react";
 
@@ -60,7 +60,7 @@ const categoryColumns: ColumnDef<CategoryApi>[] = [
     id: "actions",
     cell: ({row}) => {
       const category = row.original;
-      console.log(category);
+      // console.log(category);
       return <CurdDropDown {...category} />;
     },
   },

@@ -8,7 +8,6 @@ import Loader from "@/components/ui/Loader";
 import { useAppDispatch, useAppSelector } from "./hooks/reduxHooks";
 import { useLogoutMutation } from "./redux/features/auth/authApi";
 import { userLoggedOut } from "./redux/features/auth/authSlice";
-import Modal from "./components/common/model/Modal";
 
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
@@ -17,12 +16,12 @@ const Register = lazy(() => import("@/pages/Register"));
 const PrivateRoutes = lazy(() => import("@/middleware/PrivateRoutes"));
 const Dashboard = lazy(() => import("@/pages/dashboard/Dashboard"));
 const Product = lazy(() => import("@/pages/dashboard/product/Product"));
-const Category = lazy(() => import("@/pages/dashboard/product/Category"));
+const CategoryList = lazy(() => import("@/pages/dashboard/product/CategoryList"));
 const CreateNewProduct = lazy(
   () => import("@/pages/dashboard/product/CreateNewProduct")
 );
-const CreateNewCategory = lazy(
-  () => import("@/pages/dashboard/product/CreateNewCategory")
+const Category = lazy(
+  () => import("@/pages/dashboard/product/Category")
 );
 
 function App() {
@@ -40,10 +39,10 @@ function App() {
   // useLogout authSlice to logout from the backend and
   // frontend also going to logout and
   // reset state of redux, respectively,
+  const currentTime = new Date().getTime();
   const logout = async () => {
     if (expirationTime !== null) {
       if (expirationTime) {
-        const currentTime = new Date().getTime();
         
         // console.log(currentTime > expirationTime);
         if (currentTime > expirationTime) {
@@ -57,7 +56,7 @@ function App() {
 
   useEffect(() => {
     logout();
-  }, [dispatch, expirationTime]);
+  }, [dispatch, expirationTime, currentTime]);
 
   return (
     <Suspense fallback={<Loader />}>
@@ -73,11 +72,12 @@ function App() {
           <Route path="/admin/admin" element={<Product />} />
           <Route path="/admin/customer" element={<Product />} />
           <Route path="/admin/settings" element={<Product />} />
-          <Route path="/admin/category" element={<Category />} />
+          <Route path="/admin/category" element={<CategoryList />} />
           <Route
             path="/admin/category/create"
-            element={<CreateNewCategory />}
+            element={<Category />}
           />
+          <Route path="/admin/category/:id" element={<Category />} />
         </Route>
       </Routes>
     </Suspense>

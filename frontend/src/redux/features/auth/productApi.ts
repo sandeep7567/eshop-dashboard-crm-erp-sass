@@ -12,6 +12,7 @@ export const productApi = apiSlice.injectEndpoints({
         method: "GET",
         credentials: "include",
       }),
+      keepUnusedDataFor: 5,
       providesTags: ["Category" as any],
     }),
     getCategoryById: builder.query({
@@ -20,6 +21,7 @@ export const productApi = apiSlice.injectEndpoints({
         method: "GET",
         credentials: "include",
       }),
+      keepUnusedDataFor: 5,
       providesTags: ["Category" as any],
     }),
     createCategory: builder.mutation({
