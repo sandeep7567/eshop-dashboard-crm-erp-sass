@@ -10,7 +10,6 @@ import AdminRoute from "@/middleware/AdminRoute";
 
 const PrivateRoutes = () => {
   const isAuth = isAuthenticated();
-  console.log(isAuth);
 
   if (isAuth) {
     return (

@@ -109,6 +109,7 @@ const updateCategoryById = asyncHandler(async (req, res) => {
 // @access Admin/Private
 const deleteCategoryById = asyncHandler(async (req, res) => {
   const categoryId = req.params.id;
+  console.log(req.params);
 
   if (!categoryId) {
     throw new ApiError(404, "Category Id is required");

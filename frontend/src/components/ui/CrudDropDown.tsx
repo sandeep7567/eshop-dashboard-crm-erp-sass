@@ -6,16 +6,21 @@ import {
   DropdownMenuTrigger,
 } from "./DropDownMenu";
 import { Button } from "./Button";
-import {
-  MoreHorizontal,
-  Eye,
-  Edit2Icon,
-  Trash,
-} from "lucide-react";
-import { categories } from "@/pages/dashboard/product/Category";
+import { MoreHorizontal, Eye, Edit2Icon, Trash } from "lucide-react";
+import { useAppDispatch } from "@/hooks/reduxHooks";
+import { setIsModalOpen } from "@/redux/features/modal/modalSlice";
+import { Category } from "../product/Columns";
+import { useDeleteCategoryMutation } from "@/redux/features/auth/productApi";
 
-const CurdDropDown = (category: categories) => {
-  // navigator.clipboard.writeText(category._id).then((id) => console.log(id));
+// import { categories } from "@/pages/dashboard/product/Category";
+
+const CurdDropDown = ({_id, description, userId, title}: Category) => {
+
+  const [ categoryDeleteByIdApiCall, {  } ] = useDeleteCategoryMutation();
+
+  const handelCategoryDelete = async (categoryId:string) => {
+    await categoryDeleteByIdApiCall(categoryId).unwrap();
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -38,6 +43,7 @@ const CurdDropDown = (category: categories) => {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
+          onClick={() => handelCategoryDelete(_id)}
         >
           <Trash className="mr-2 h-4 w-4" />
           <span>Delete</span>

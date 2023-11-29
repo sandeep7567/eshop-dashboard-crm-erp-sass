@@ -8,6 +8,7 @@ import Loader from "@/components/ui/Loader";
 import { useAppDispatch, useAppSelector } from "./hooks/reduxHooks";
 import { useLogoutMutation } from "./redux/features/auth/authApi";
 import { userLoggedOut } from "./redux/features/auth/authSlice";
+import Modal from "./components/common/model/Modal";
 
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
@@ -43,14 +44,8 @@ function App() {
     if (expirationTime !== null) {
       if (expirationTime) {
         const currentTime = new Date().getTime();
-        // console.log(
-        //   currentTime > expirationTime,
-        //   expirationTime,
-        //   currentTime,
-        //   "before condition"
-        // );
-
-        console.log(currentTime > expirationTime);
+        
+        // console.log(currentTime > expirationTime);
         if (currentTime > expirationTime) {
           await logoutApiCall(userInfo?._id).unwrap();
           dispatch(userLoggedOut());

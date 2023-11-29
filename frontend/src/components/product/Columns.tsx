@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import CurdDropDown from "../ui/CrudDropDown";
-import { categories } from "@/pages/dashboard/product/Category";
+import { CategoryApi } from "@/pages/dashboard/product/Category";
 import { Button } from "../ui/Button";
 import { ArrowUpDown } from "lucide-react";
 
@@ -13,7 +13,7 @@ export type Category = {
   userId: string;
 };
 
-const categoryColumns: ColumnDef<categories>[] = [
+const categoryColumns: ColumnDef<CategoryApi>[] = [
   {
     accessorKey: "title",
     header: ({ column }) => {
@@ -35,7 +35,16 @@ const categoryColumns: ColumnDef<categories>[] = [
     cell: ({ row }) => {
       const description: string = row.getValue("description");
       // const desc = description.slice(0, 4);
-      return <div className="w-[25rem]">{description}</div>;
+      return <div className="w-[13rem]">{description}</div>;
+    },
+  },
+  {
+    accessorKey: "_id",
+    header: "CategoryID",
+    cell: ({ row }) => {
+      const categoryId: string = row.getValue("_id");
+      // const desc = description.slice(0, 4);
+      return <div className="w-[12rem]">{categoryId}</div>;
     },
   },
   {
@@ -49,9 +58,9 @@ const categoryColumns: ColumnDef<categories>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: ({row}) => {
       const category = row.original;
-
+      console.log(category);
       return <CurdDropDown {...category} />;
     },
   },

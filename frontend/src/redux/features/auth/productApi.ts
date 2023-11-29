@@ -40,10 +40,10 @@ export const productApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Category" as any],
     }),
-    deleteCategory: builder.mutation({
-      query: (categoryId) => ({
-        url: `${PRODUCT}/categoryId/${categoryId}`,
-        method: "POST",
+    deleteCategory: builder.mutation<any, string>({
+      query: (categoryId:string) => ({
+        url: `${PRODUCT}/category/${categoryId}`,
+        method: "DELETE",
         credentials: "include",
       }),
       invalidatesTags: ["Category" as any],

@@ -56,16 +56,21 @@ export const authSlice = createSlice({
       localStorage.setItem("isLoggedOut", JSON.stringify(false));
       localStorage.setItem("expirationTime", JSON.stringify(expirationTime(action.payload?.updatedAt)));
     },
-    userLoggedOut: () => {
-      localStorage.clear();
+    userLoggedOut: (state) => {
       // state.userInfo = {} as adminInfo || null;
       // state.isLoggedIn = false;
       // state.isLoggedOut = true;
       // state.expirationTime = 0;
-
+      
       // localStorage.clear();
-
-      return initialState;
+      
+      localStorage.clear();
+      state.userInfo = {} as adminInfo || null;
+      state.isLoggedIn = false;
+      state.isLoggedOut = true;
+      state.expirationTime = 0;
+      localStorage.clear();
+      // return initialState;
     },
   },
 });
