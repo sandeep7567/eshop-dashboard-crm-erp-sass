@@ -5,21 +5,19 @@ type initialSatate = {
 }
 
 const initialState: initialSatate = {
-  isModalOpen: localStorage.getItem("isModalOpen")
-    ? JSON.parse(localStorage.getItem("isModalOpen") || "")
-    : false,
+  isModalOpen: false
 };
 
 export const modalSlice = createSlice({
   name: "modal",
   initialState,
   reducers: {
-    setIsModalOpen: (state) => {
+    setIsModalOpen: (state, action:PayloadAction<boolean>) => {
       // state.id = action.payload;
-      state.isModalOpen = true;
+      state.isModalOpen = action.payload;
     },
-    setIsModalClose: (state) => {
-      state.isModalOpen = false;
+    setIsModalClose: (state, action:PayloadAction<boolean>) => {
+      state.isModalOpen = action.payload;
     },
   },
 });

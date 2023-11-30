@@ -18,6 +18,7 @@ import { z } from "zod";
 import {
   useCreateCategoryMutation,
   useGetCategoryByIdQuery,
+  useUpdateCategoryMutation,
 } from "@/redux/features/auth/productApi";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/Button";
@@ -42,9 +43,10 @@ const CategoryForm = ({
 }: CreateNewCategoryFormProps) => {
   const navigate = useNavigate();
   const [createCategoryApi, { isLoading }] = useCreateCategoryMutation();
+  const [updateCategoryApi, { isLoading:updateIsLoading }] = useUpdateCategoryMutation();
 
   const [edit, setEdit] = useState(false);
-
+  
   const {
     data,
     isLoading: getCategoryByIdLoading,
@@ -68,6 +70,7 @@ const CategoryForm = ({
     values: {
       title: updateData ? updateData?.title : "",
       description: updateData ? updateData?.description : "",
+      categoryId: id ? id : "",
     },
     defaultValues: {
       title: "",
@@ -79,9 +82,10 @@ const CategoryForm = ({
     // alert(JSON.stringify(data));
     try {
       if (id && updateData) {
-        alert(JSON.stringify(data));
+        await updateCategoryApi(data);
       } else {
-        await createCategoryApi(data);
+        const { categoryId, ...categoryData } = data;
+        await createCategoryApi(categoryData);
       }
       navigate("/admin/category");
     } catch (error) {
@@ -154,7 +158,7 @@ const CategoryForm = ({
         {children}
         <CardFooter className="w-1/2 flex justify-start mr-auto">
           <Button
-            disabled={isLoading}
+            disabled={id ? updateIsLoading : isLoading}
             size={"sm"}
             type="submit"
             className="w-2/5 -ml-6"

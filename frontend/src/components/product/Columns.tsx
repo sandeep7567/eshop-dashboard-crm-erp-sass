@@ -35,25 +35,25 @@ const categoryColumns: ColumnDef<CategoryApi>[] = [
     cell: ({ row }) => {
       const description: string = row.getValue("description");
       // const desc = description.slice(0, 4);
-      return <div className="w-[13rem]">{description}</div>;
+      return <div className="w-[26rem]">{description}</div>;
     },
   },
-  {
-    accessorKey: "_id",
-    header: "CategoryID",
-    cell: ({ row }) => {
-      const categoryId: string = row.getValue("_id");
-      // const desc = description.slice(0, 4);
-      return <div className="w-[12rem]">{categoryId}</div>;
-    },
-  },
+  // {
+  //   accessorKey: "_id",
+  //   header: "CategoryID",
+  //   cell: ({ row }) => {
+  //     const categoryId: string = row.getValue("_id");
+  //     // const desc = description.slice(0, 4);
+  //     return <div className="w-[12rem]">{categoryId}</div>;
+  //   },
+  // },
   {
     accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) => {
       const date = new Date(row.getValue("createdAt"));
       const formatted = date.toLocaleDateString();
-      return <div className="text-left w-48">{formatted}</div>;
+      return <div className="text-left w-52">{formatted}</div>;
     },
   },
   {
