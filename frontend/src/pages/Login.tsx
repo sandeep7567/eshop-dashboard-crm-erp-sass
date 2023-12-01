@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/reduxHooks.ts";
 import { userLoggedIn } from "@/redux/features/auth/authSlice.ts";
 import { Loader2 } from "lucide-react";
 import { emailVerify } from "@/verifiyer/verifyFormData.ts";
-import { ErrorBox } from "@/components/ui/ErrorBox.tsx";
+import ErrorBox from "@/components/ui/ErrorBox.tsx";
 
 export type TError = {
   _id?: string;

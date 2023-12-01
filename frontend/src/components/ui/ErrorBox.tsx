@@ -20,4 +20,4 @@ const ErrorBox = ({err, _id, verify, className, ...props}:ErrorBoxProps) => {
   )
 };
 
-export { ErrorBox };
+export default ErrorBox;

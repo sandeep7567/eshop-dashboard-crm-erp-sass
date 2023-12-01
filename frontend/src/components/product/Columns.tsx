@@ -38,15 +38,6 @@ const categoryColumns: ColumnDef<CategoryApi>[] = [
       return <div className="w-[26rem]">{description}</div>;
     },
   },
-  // {
-  //   accessorKey: "_id",
-  //   header: "CategoryID",
-  //   cell: ({ row }) => {
-  //     const categoryId: string = row.getValue("_id");
-  //     // const desc = description.slice(0, 4);
-  //     return <div className="w-[12rem]">{categoryId}</div>;
-  //   },
-  // },
   {
     accessorKey: "createdAt",
     header: "Created At",
@@ -59,9 +50,8 @@ const categoryColumns: ColumnDef<CategoryApi>[] = [
   {
     id: "actions",
     cell: ({row}) => {
-      const category = row.original;
-      // console.log(category);
-      return <CurdDropDown {...category} />;
+      const _id = row.original._id;
+      return <CurdDropDown route="category" _id={_id} />;
     },
   },
 ];

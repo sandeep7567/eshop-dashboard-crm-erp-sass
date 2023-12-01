@@ -6,23 +6,14 @@ import "./App.css";
 import Loader from "@/components/ui/Loader";
 
 import { useAppDispatch, useAppSelector } from "./hooks/reduxHooks";
+
 import { useLogoutMutation } from "./redux/features/auth/authApi";
 import { userLoggedOut } from "./redux/features/auth/authSlice";
 
-const Login = lazy(() => import("@/pages/Login"));
-const Register = lazy(() => import("@/pages/Register"));
+import AuthRoute from "@/router/AuthRoute";
+import AppRoute from "@/router/AppRoute";
 
-// admin private route
 const PrivateRoutes = lazy(() => import("@/middleware/PrivateRoutes"));
-const Dashboard = lazy(() => import("@/pages/dashboard/Dashboard"));
-const Product = lazy(() => import("@/pages/dashboard/product/Product"));
-const CategoryList = lazy(() => import("@/pages/dashboard/product/CategoryList"));
-const CreateNewProduct = lazy(
-  () => import("@/pages/dashboard/product/CreateNewProduct")
-);
-const Category = lazy(
-  () => import("@/pages/dashboard/product/Category")
-);
 
 function App() {
   const [logoutApiCall] = useLogoutMutation();
@@ -43,7 +34,6 @@ function App() {
   const logout = async () => {
     if (expirationTime !== null) {
       if (expirationTime) {
-        
         // console.log(currentTime > expirationTime);
         if (currentTime > expirationTime) {
           await logoutApiCall(userInfo?._id).unwrap();
@@ -61,23 +51,16 @@ function App() {
   return (
     <Suspense fallback={<Loader />}>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {AuthRoute.map((route) => {
+          const { element, path } = route;
+          return <Route key={path} path={path} element={element} />;
+        })}
 
         <Route element={<PrivateRoutes />}>
-          <Route path="/admin/dashboard" element={<Dashboard />} />
-          <Route path="/admin/product" element={<Product />} />
-          <Route path="/admin/product/create" element={<CreateNewProduct />} />
-          <Route path="/admin/admin" element={<Product />} />
-          <Route path="/admin/customer" element={<Product />} />
-          <Route path="/admin/settings" element={<Product />} />
-          <Route path="/admin/category" element={<CategoryList />} />
-          <Route
-            path="/admin/category/create"
-            element={<Category />}
-          />
-          <Route path="/admin/category/:id" element={<Category />} />
+          {AppRoute.map((route) => {
+            const { element, path } = route;
+            return <Route key={path} path={path} element={element} />;
+          })}
         </Route>
       </Routes>
     </Suspense>

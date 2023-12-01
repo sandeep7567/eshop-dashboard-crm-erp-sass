@@ -5,10 +5,9 @@ import { useDeleteCategoryMutation } from "@/redux/features/auth/productApi";
 import { Category } from "../product/Columns";
 
 import { Button } from "./Button";
-import { MoreHorizontal, Eye, Edit2Icon, Trash, BookOpen } from "lucide-react";
+import { MoreHorizontal, Eye, Edit2Icon, Trash } from "lucide-react";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogDescription,
@@ -26,12 +25,10 @@ import {
 import { Input } from "./Input";
 import { useState } from "react";
 
-const CurdDropDown = ({ _id }: Category) => {
+const CurdDropDown = ({_id, route}: {_id: string, route: string}) => {
   const [categoryDeleteByIdApiCall] = useDeleteCategoryMutation();
 
   const [isOpen, setIsOpen] = useState(false);
-
-  console.log(isOpen);
 
   const handleDeleteCategoryById = async () => {
     await categoryDeleteByIdApiCall(_id).unwrap();
@@ -51,11 +48,13 @@ const CurdDropDown = ({ _id }: Category) => {
           align="end"
           className="w-[45px] absolute top-0 right-52 cursor-pointer"
         >
+          <Link to={`/admin/${route}/${_id}/?view`}>
           <DropdownMenuItem className="">
             <Eye className="mr-2 h-4 w-4" />
             <span>Show</span>
           </DropdownMenuItem>
-          <Link to={`/admin/category/${_id}`}>
+          </Link>
+          <Link to={`/admin/${route}/${_id}`}>
             <DropdownMenuItem>
               <Edit2Icon className="mr-2 h-4 w-4" />
               <span>Edit</span>

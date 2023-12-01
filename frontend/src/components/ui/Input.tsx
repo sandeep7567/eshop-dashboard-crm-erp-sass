@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { TError } from "@/pages/Login";
-import { ErrorBox } from "./ErrorBox";
+import ErrorBox from "@/components/ui/ErrorBox";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {

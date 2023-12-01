@@ -31,22 +31,22 @@ import {
 import ErrorMessage from "@/components/ui/ErrorMessage";
 import Spinner from "@/components/ui/Spinner";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface CreateNewCategoryFormProps {
   children?: React.ReactNode;
   id?: string;
+  view?: boolean;
 }
 
-const CategoryForm = ({
-  children,
-  id,
-}: CreateNewCategoryFormProps) => {
+const CategoryForm = ({ children, id, view }: CreateNewCategoryFormProps) => {
   const navigate = useNavigate();
   const [createCategoryApi, { isLoading }] = useCreateCategoryMutation();
-  const [updateCategoryApi, { isLoading:updateIsLoading }] = useUpdateCategoryMutation();
+  const [updateCategoryApi, { isLoading: updateIsLoading }] =
+    useUpdateCategoryMutation();
 
   const [edit, setEdit] = useState(false);
-  
+
   const {
     data,
     isLoading: getCategoryByIdLoading,
@@ -54,7 +54,7 @@ const CategoryForm = ({
   } = useGetCategoryByIdQuery(id, {
     skip: edit ? false : true,
   });
-  
+
   const updateData: CategoryApi = data?.data;
 
   useEffect(() => {
@@ -118,7 +118,11 @@ const CategoryForm = ({
                 </FormLabel>
                 <FormControl>
                   <Input
-                    className="text-sm"
+                    readOnly={view}
+                    className={cn(
+                      view && "bg-gray-100 border-gray-900 focus:border-gray-950",
+                      "text-sm"
+                    )}
                     placeholder="create title"
                     {...field}
                   />
@@ -141,7 +145,11 @@ const CategoryForm = ({
                 </FormLabel>
                 <FormControl>
                   <Input
-                    className="text-sm"
+                    readOnly={view}
+                    className={cn(
+                      view && "bg-gray-100 border-gray-900 focus:border-gray-950",
+                      "text-sm"
+                    )}
                     placeholder="write short category description"
                     {...field}
                   />
@@ -156,31 +164,34 @@ const CategoryForm = ({
         </div>
         <Separator className="my-6 mx-auto" />
         {children}
-        <CardFooter className="w-1/2 flex justify-start mr-auto">
-          <Button
-            disabled={id ? updateIsLoading : isLoading}
-            size={"sm"}
-            type="submit"
-            className="w-2/5 -ml-6"
-            variant={"default"}
-          >
-            {isLoading ? (
-              <>
-                <Loader className="mr-2 h-5 w-5 animate-spin" />
-                <span className="font-bold text-sm w-fit">
-                  {id ? "Update" : "Save"}
-                </span>
-              </>
-            ) : (
-              <>
-                <PlusIcon className="mr-2 h-5 w-5" />
-                <span className="font-bold text-sm w-fit">
-                  {id ? "Update" : "Save"}
-                </span>
-              </>
-            )}
-          </Button>
-        </CardFooter>
+        {view && <div className="h-11"></div>}
+        {!view && (
+          <CardFooter className="w-1/2 flex justify-start mr-auto">
+            <Button
+              disabled={id ? updateIsLoading : isLoading}
+              size={"sm"}
+              type="submit"
+              className="w-2/5 -ml-6"
+              variant={"default"}
+            >
+              {isLoading ? (
+                <>
+                  <Loader className="mr-2 h-5 w-5 animate-spin" />
+                  <span className="font-bold text-sm w-fit">
+                    {id ? "Update" : "Save"}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <PlusIcon className="mr-2 h-5 w-5" />
+                  <span className="font-bold text-sm w-fit">
+                    {id ? "Update" : "Save"}
+                  </span>
+                </>
+              )}
+            </Button>
+          </CardFooter>
+        )}
       </form>
     </Form>
   );
